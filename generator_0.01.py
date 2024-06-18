@@ -5,7 +5,7 @@ import os
 os.system('cls' if os.name == 'nt' else 'clear')
 
 seed = random.randint(0, 1000000)
-seed = 123123
+#seed = 123123
 random.seed(seed)
 print("seed: ", seed)
 
