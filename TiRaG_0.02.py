@@ -5,7 +5,7 @@ import os
 os.system('cls' if os.name == 'nt' else 'clear')
 
 seed = random.randint(0, 1000000)
-#seed = 123123
+seed = 123123
 random.seed(seed)
 print("seed: ", seed)
 
@@ -25,7 +25,26 @@ cities_list = []
 first_names = ["Uruh", "Erdor", "Rahath", "Sbit", "Aramis", "Belgas", "Darven", "Ergis", "Zaras", "Kalis", "Laris", "Merdon", "Noris", "Oldrik"]
 last_names = ["Der Horoh", "Or Ollen", "Meter of", "Doren", "Elten", "Haldor", "Yorven", "Karel", "Larden", "Mardor", "Noris", "Relton", "Teris"]
 
-res_names = ["wood", "stone", "ore", "coal", "iron", "instruments", "food", "raw food"]
+res_names = ["wood", "stone", "ore", "coal", "iron", "instruments", "food"]
+
+def intinput(text, min_ = None, max_ = None, is_valid = False):
+    while is_valid != True:
+        try:
+            value = int(input(text))
+        except:
+            print("invalid input")
+            continue
+        if min_ != None:
+            if (min_ > value):
+                print("invalid input")
+                continue
+        if max_ != None:
+            if (max_ < value):
+                print("invalid input")
+                continue
+        os.system('cls' if os.name == 'nt' else 'clear')
+        is_valid = True
+    return value
 
 class production:
     def __init__(self, name, workhours, workers, workplaces, production, consumption):
@@ -52,9 +71,29 @@ class citizen:
         self.city = city
         self.work = None
         self.production = None
-        self.hunger = 0
-        self.thirst = 0
+        self.motivation = 1
+        self.money = 0
         self.workhours = 240
+        self.hunger = 0
+        self.basic_needs = [0, 0, 0, 0, 0, 0, 5]
+        self.second_needs = [0, 0, 0, 0, 0, 0, 0]
+
+    def needs(self):
+        for i in range(len(self.basic_needs)):
+             if self.city.ResourceManagement.res_price[i] != 0:
+                IHTC = min(math.trunc(self.money / self.city.ResourceManagement.res_price[i]), self.basic_needs[i], self.city.ResourceManagement.res[i])
+                self.money -= IHTC * self.city.ResourceManagement.res_price[i]
+                self.basic_needs[i] -= IHTC
+        if (0 in self.basic_needs) != (len(self.basic_needs)):
+            hunger += 1
+        if hunger == 5:
+            del self
+
+        for i in range(len(self.second_needs)):
+             if self.city.ResourceManagement.res_price[i] != 0:
+                IHTC = min(math.trunc(self.money / self.city.ResourceManagement.res_price[i]), self.second_needs[i])
+                self.money -= IHTC * self.city.ResourceManagement.res_price[i]
+                self.second_needs[i] -= IHTC
 
 class ResourceManagement:
     def __init__(self, res_names):
@@ -70,34 +109,34 @@ class ResourceManagement:
             self.res_production.append(0)
             self.res_price.append(0)
 
-        sawmill_production =            production("sawmill",                5,  [], 5,  [1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 2, 0, 0])
-        stone_mine_production =         production("stone mine",             10, [], 5,  [0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 2, 0, 0])
-        iron_mine_production =          production("iron mine",              5,  [], 5,  [0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 3, 0, 0])
-        coal_mine_production =          production("coal mine",              10, [], 5,  [0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 4, 0, 0])
-        forge_production =              production("forge",                  4,  [], 5,  [0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 1, 3, 0, 2, 0, 0])
-        workshop_production =           production("workshop",               3,  [], 5,  [0, 0, 0, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 3, 0, 0])
-        building_company =              production("building company",       20, [], 10, [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 5, 0, 0])
-        trading_post =                  production("trading post",           20, [], 5,  [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0])
-        farm_production =               production("farm",                   10, [], 5,  [0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2, 0, 0])
+        sawmill_production =            production("sawmill",                5,  [], 5,  [1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 2, 0])
+        stone_mine_production =         production("stone mine",             10, [], 5,  [0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 2, 0])
+        iron_mine_production =          production("iron mine",              5,  [], 5,  [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 3, 0])
+        coal_mine_production =          production("coal mine",              10, [], 5,  [0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 4, 0])
+        forge_production =              production("forge",                  4,  [], 5,  [0, 0, 0, 0, 1, 0, 0], [0, 0, 1, 3, 0, 2, 0])
+        workshop_production =           production("workshop",               3,  [], 5,  [0, 0, 0, 0, 0, 1, 0], [1, 0, 0, 0, 1, 3, 0])
+        building_company =              production("building company",       20, [], 10, [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 5, 0])
+        trading_post =                  production("trading post",           20, [], 5,  [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0])
+        farm_production =               production("farm",                   10, [], 5,  [0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2, 0])
         
-        wood_basic_production =         production("wood production",        10, [], 1, [1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0, 0])
-        stone_basic_production =        production("stone production",       15, [], 1, [0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0, 0])
-        ore_basic_production =          production("ore production",         20, [], 1, [0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0, 0])
-        coal_basic_production =         production("coal production",        15, [], 1, [0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0, 0])
-        iron_basic_production =         production("iron production",        12, [], 1, [0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 1, 5, 0, 0,  0, 0])
-        instrumenst_basic_production =  production("instruments production", 20, [], 1, [0, 0, 0, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0,  0, 0])
-        building_basic =                production("basic building",         20, [], 1, [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 10, 0, 0])
-        raw_food_basic_production =     production("raw food production",    20, [], 1, [0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 3,  0, 0])
+        wood_basic_production =         production("wood production",        10, [], 1,  [1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0])
+        stone_basic_production =        production("stone production",       15, [], 1,  [0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0])
+        ore_basic_production =          production("ore production",         20, [], 1,  [0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0])
+        coal_basic_production =         production("coal production",        15, [], 1,  [0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0,  0])
+        iron_basic_production =         production("iron production",        12, [], 1,  [0, 0, 0, 0, 1, 0, 0], [0, 0, 1, 5, 0, 0,  0])
+        instrumenst_basic_production =  production("instruments production", 20, [], 1,  [0, 0, 0, 0, 0, 1, 0], [1, 0, 0, 0, 1, 0,  0])
+        building_basic =                production("basic building",         20, [], 1,  [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 10, 0])
+        raw_food_basic_production =     production("food production",        20, [], 1,  [0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 3,  0])
 
-        sawmill_build =                 building("sawmill",                  [5],   1500,  sawmill_production)
-        stone_mine_build =              building("stone mine",               [10, 5],   3000,  stone_mine_production)
-        iron_mine_build =               building("iron mine",                [20, 10],   4500,  iron_mine_production)
-        coal_mine_build =               building("coal mine",                [15, 5],   3000,  coal_basic_production)
-        forge_build =                   building("forge",                    [40, 20,  0, 10],   6000,  forge_production)
-        workshop_build =                building("workshop",                 [50, 25,  0, 15],   7500,  workshop_production)
-        building_company_build =        building("building company",         [50, 100, 0, 30, 0, 20],  10000, building_company)
-        trading_post_build =            building("trading post build",       [50, 20,  0, 0,  0, 5],   5000,  trading_post)
-        farm_build =                    building("farm",                     [15, 0,   0, 0,  0, 0],   3000,  farm_production)
+        sawmill_build =                 building("sawmill",                  [5],                      150,  sawmill_production)
+        stone_mine_build =              building("stone mine",               [10, 5],                  300,  stone_mine_production)
+        iron_mine_build =               building("iron mine",                [20, 10],                 450,  iron_mine_production)
+        coal_mine_build =               building("coal mine",                [15, 5],                  300,  coal_basic_production)
+        forge_build =                   building("forge",                    [40, 20,  0, 10],         600,  forge_production)
+        workshop_build =                building("workshop",                 [50, 25,  0, 15],         750,  workshop_production)
+        building_company_build =        building("building company",         [50, 100, 0, 30, 0, 20],  1000, building_company)
+        trading_post_build =            building("trading post build",       [50, 20,  0, 0,  0, 5],   500,  trading_post)
+        farm_build =                    building("farm",                     [15, 0,   0, 0,  0, 0],   300,  farm_production)
         
         self.basic_production = [wood_basic_production, stone_basic_production, ore_basic_production, coal_basic_production, iron_basic_production, instrumenst_basic_production, building_basic, raw_food_basic_production]
         self.advanced_production = [sawmill_production, stone_mine_production, iron_mine_production, coal_mine_production, forge_production, workshop_production, building_company, trading_post, farm_production]
@@ -113,7 +152,7 @@ class city:
         self.citizens = []
         for i in range(population):
             self.citizens.append(citizen(random.choice(fnames), random.choice(lnames), self.name))
-            
+
         self.employed_citizens = []
         self.unemployed_citizens = self.citizens
         
@@ -138,7 +177,7 @@ class city:
                 self.new_birth.append(0) 
                 
     def new_citizen(self, fname, lname):
-        self.citizens.append(citizen(fname, lname, self.name))
+        self.citizens.append(citizen(fname, lname, self))
         self.population += 1
         
     def economics_upd(self):
@@ -160,6 +199,8 @@ class city:
                 revenue += self.ResourceManagement.basic_production[i].production[j] * self.ResourceManagement.res_price[j] - self.ResourceManagement.basic_production[i].consumption[j] * self.ResourceManagement.res_price[j]
             if self.ResourceManagement.basic_production[i].quantity > 0:
                 self.ResourceManagement.basic_production[i].salary = revenue / (self.ResourceManagement.basic_production[i].workplaces * self.ResourceManagement.basic_production[i].quantity)
+            for j in range(len(self.ResourceManagement.basic_production[i].workers)):
+                self.ResourceManagement.basic_production[i].workers[j].money += self.ResourceManagement.basic_production[i].salary
 
         for i in range(len(self.ResourceManagement.advanced_production)):    
             revenue = 0
@@ -167,6 +208,8 @@ class city:
                 revenue += self.ResourceManagement.advanced_production[i].production[j] * self.ResourceManagement.res_price[j] - self.ResourceManagement.advanced_production[i].consumption[j] * self.ResourceManagement.res_price[j]
             if self.ResourceManagement.advanced_production[i].quantity > 0:
                 self.ResourceManagement.advanced_production[i].salary = revenue / (self.ResourceManagement.advanced_production[i].workplaces * self.ResourceManagement.advanced_production[i].quantity)
+            for j in range(len(self.ResourceManagement.advanced_production[i].workers)):
+                self.ResourceManagement.advanced_production[i].workers[j].money += self.ResourceManagement.advanced_production[i].salary
 
         if self.in_build == True:
             builders_time = 0
@@ -186,6 +229,13 @@ class city:
 
         for i in range(len(self.ResourceManagement.res)):
             self.budget += self.ResourceManagement.res[i] * self.ResourceManagement.res_price[i]
+
+        for i in range(len(self.ResourceManagement.basic_production)):
+            for j in range(len(self.ResourceManagement.basic_production[i].workers)):
+                for q in range(len(self.ResourceManagement.basic_production[i].consumption)):
+                    self.ResourceManagement.res_consumption[q] += self.ResourceManagement.basic_production[i].consumption[q] * round(self.ResourceManagement.basic_production[i].workers[j].workhours / self.ResourceManagement.basic_production[i].workhours)
+                for q in range(len(self.ResourceManagement.basic_production[i].consumption)):
+                    self.ResourceManagement.res_production[q] += self.ResourceManagement.basic_production[i].production[q] * round(self.ResourceManagement.basic_production[i].workers[j].workhours / self.ResourceManagement.basic_production[i].workhours)
         
     def control_city(self):
         action = intinput("1: build \n2: assign workers\n3: unassign workers", 1, 3)
@@ -211,7 +261,7 @@ class city:
                     self.building_time = self.ResourceManagement.buildings[build].workhours
                     print("building of ", self.ResourceManagement.buildings[build].name, " is in progress")
                 else:
-                    print("building is already in progress")
+                    print("building ", self.ResourceManagement.buildings[build].name, " is already in progress")
 
         elif action == 2:
             if len(self.unemployed_citizens) != 0:
@@ -219,8 +269,7 @@ class city:
                 for i in range(len(self.unemployed_citizens)):
                     print(i + 1, ": ", self.unemployed_citizens[i].fname, self.unemployed_citizens[i].lname)
                 choose = intinput("choose worker: ", 1, len(self.unemployed_citizens)) - 1
-                adv = intinput("1: basic production \n 2: advanced production", 1, 2)
-                valid_input = False
+                adv = intinput("1: basic production \n2: advanced production", 1, 2)
                 print("where to?")
                 if adv == 1:
                     for i in range(len(self.ResourceManagement.basic_production)):
@@ -230,11 +279,14 @@ class city:
                     self.ResourceManagement.basic_production[work-1].workers.append(self.unemployed_citizens[choose])
 
                 elif adv == 2:
-                    for i in range(len(self.ResourceManagement.advanced_production)):
-                        if (self.ResourceManagement.advanced_production[i].quantity > 0) & (len(self.ResourceManagement.advanced_production[i].workers) < (self.ResourceManagement.advanced_production[i].quantity * self.ResourceManagement.advanced_production[i].workplaces)):
-                            print(i, ": ", self.ResourceManagement.advanced_production[i].name)
-                    work = intinput("", 1, len(self.ResourceManagement.advanced_production))
-                    self.ResourceManagement.advanced_production[work-1].workers.append(self.unemployed_citizens[choose])
+                    if len(self.ResourceManagement.advanced_production) > 0:
+                        for i in range(len(self.ResourceManagement.advanced_production)):
+                            if (self.ResourceManagement.advanced_production[i].quantity > 0) & (len(self.ResourceManagement.advanced_production[i].workers) < (self.ResourceManagement.advanced_production[i].quantity * self.ResourceManagement.advanced_production[i].workplaces)):
+                                print(i, ": ", self.ResourceManagement.advanced_production[i].name)
+                        work = intinput("", 1, len(self.ResourceManagement.advanced_production))
+                        self.ResourceManagement.advanced_production[work-1].workers.append(self.unemployed_citizens[choose])
+                    else:
+                        print("No advanced production")
 
                 self.unemployed_citizens.pop(choose)
 
@@ -248,7 +300,7 @@ class city:
                 for i in range(len(self.ResourceManagement.basic_production)):
                     if len(self.ResourceManagement.basic_production[i].workers) != 0:
                         print(i + 1, ": ", self.ResourceManagement.basic_production[i].name, " \n  workers:", len(self.ResourceManagement.basic_production[i].workers), "\n")
-                prod = intinput("", 1, len(self.ResourceManagement.basic_production[i].workers)) - 1
+                prod = intinput("", 1, len(self.ResourceManagement.basic_production)) - 1
                 for i in range(len(self.ResourceManagement.basic_production[prod].workers)):
                     print(i+1, ": ", self.ResourceManagement.basic_production[prod].workers[i].fname + " " + self.ResourceManagement.basic_production[prod].workers[i].lname)
                 worker = intinput("", 1, len(self.ResourceManagement.basic_production[prod].workers)) - 1
@@ -264,14 +316,6 @@ class city:
                 worker = intinput("", 1, len(self.ResourceManagement.advanced_production[prod].workers)) - 1
                 self.unemployed_citizens.append(self.ResourceManagement.advanced_production[prod].workers[worker])
                 self.ResourceManagement.advanced_production[prod].workers.pop(worker)
-
-    def production(self):
-        for i in range(len(self.ResourceManagement.basic_production)):
-            for j in range(len(self.ResourceManagement.basic_production[i].workers)):
-                for q in range(len(self.ResourceManagement.basic_production[i].consumption)):
-                    self.ResourceManagement.res_consumption[q] += self.ResourceManagement.basic_production[i].consumption[q] * round(self.ResourceManagement.basic_production[i].workers[j].workhours / self.ResourceManagement.basic_production[i].workhours)
-                for q in range(len(self.ResourceManagement.basic_production[i].consumption)):
-                    self.ResourceManagement.res_production[q] += self.ResourceManagement.basic_production[i].production[q] * round(self.ResourceManagement.basic_production[i].workers[j].workhours / self.ResourceManagement.basic_production[i].workhours)
 
     def economy_information(self):
         for i in range(len(self.ResourceManagement.res)):
@@ -289,34 +333,51 @@ class city:
                 if self.currently_building.res[i] > 0:
                     print(" ", self.currently_building.res[i], " ", self.ResourceManagement.res_names[i])
         print("bbp: ", round(self.bbp, 1))
+
+    def citizen_information(self):
+        print("Choose a citizen:")
+        print(len(self.citizens))
+        for i in range(len(self.citizens)):
+            print(i + 1, ": ", self.citizens[i].fname," ", self.citizens[i].lname)
+        choose = intinput("")
+        print(self.citizens[choose].fname," ", self.citizens[choose].lname)
+        print("basic needs:")
+        for i in range(len(self.citizens[choose].basic_needs)):
+            print(self.ResourceManagement.res_names[i], ": ", self.citizens[choose].basic_needs[i])
+
+        print("second needs:")
+        for i in range(len(self.citizens[choose].second_needs)):
+            print(self.ResourceManagement.res_names[i], ": ", self.citizens[choose].second_needs[i])
         
     def auto_work(self):
         works = []
+        priority = []
 
-    # Calculate potential for basic production
-        for basic in self.ResourceManagement.basic_production:
-            potential = sum(
-                prod * price - cons * price
-                for prod, cons, price in zip(basic.production, basic.consumption, self.ResourceManagement.res_price)
-            )
-            works.append([basic, basic.salary, potential])
-
-    # Calculate potential for advanced production
         for advanced in self.ResourceManagement.advanced_production:
-            available_workplaces = advanced.workplaces * advanced.quantity - len(advanced.workers)
-            if available_workplaces > 0:
-                potential = sum(
-                    prod * price - cons * price
-                    for prod, cons, price in zip(advanced.production, advanced.consumption, self.ResourceManagement.res_price)
-                )
-                works.append([advanced, advanced.salary, potential])
+            if advanced.quantity * advanced.workplaces - len(advanced.workers):
+                works.append(advanced)
+            else:
+                for basic in self.ResourceManagement.basic_production:
+                    for i in range(len(basic.production)):
+                        if (basic.production[i] > 0) & (advanced.production[i] > 0):
+                            works.append(basic)
+        
+        for i in range(len(works)):
+            revenue = 0
+            zero_price = 0
+            need = 0
+            for j in range(len(self.ResourceManagement.res)):
+                revenue += (works[i].production[j] - works[i].consumption[j]) * self.ResourceManagement.res_price[j]
+                if ((self.ResourceManagement.res_production[j] == 0) & (works[i].production[j] > 0)):
+                    zero_price += 1
+                if (((self.ResourceManagement.res_production[j] - self.ResourceManagement.res_consumption[j]) < 0) & (works[i].production[j] > 0)):
+                    need += works[i].production[j]
+            priority.append([works[i], revenue, zero_price, need])
+        
+        priority.sort(key=lambda x: (x[3], x[2], x[1]))
 
-    # Find the best work based on salary + potential
-        best = max(range(len(works)), key=lambda i: works[i][1] + works[i][2])
-
-    # Assign the best work to the last unemployed citizen
-        works[best][0].workers.append(self.unemployed_citizens.pop())
-
+        priority[-1][0].workers.append(self.unemployed_citizens[0])
+        self.unemployed_citizens.pop(0)
 
     def inter_trade(self, citites_list):
         pass
@@ -488,7 +549,7 @@ def player_action(player):
     print("1: move")
     print("2: interact with city")
     print("3: get the information about the city")
-    action = intinput("")
+    action = intinput("", 1, 4)
     if action == 1:
         print("1: up")
         print("2: left")
@@ -515,7 +576,11 @@ def player_action(player):
         if cities_map[player.y][player.x] == 1:
             for i in range(len(cities_list)):
                 if (cities_list[i].x == player.x) & (cities_list[i].y == player.y):
-                    cities_list[i].economy_information()
+                    action = intinput("1: economy information\n2: citizens information\n", 1, 2)
+                    if action == 1:
+                        cities_list[i].economy_information()
+                    elif action == 2:
+                        cities_list[i].citizen_information()
         else:
             print("no city")
     return player
@@ -545,15 +610,13 @@ def end_turn(cities):
     for i in range(len(cities)):
         cities[i].upd_population()
         cities[i].economics_upd()
-        cities[i].production()
-    pass
 
 def spawn_player(cities_list):
     print("choose city:")
     for i in range(len(cities_list)):
         while len(cities_list[i].unemployed_citizens) > 0:
             cities_list[i].auto_work()
-            end_turn(cities_list)
+            cities_list[i].economics_upd()
         print(i + 1,": ", cities_list[i].name)
     city = None
     city = cities_list[intinput("", 1, len(cities_list)) - 1]
@@ -562,25 +625,6 @@ def spawn_player(cities_list):
 
 def debug():
     input("1: set salary \"1 - basic, 2 - advanced; production number; salary\"\n2: autowork \"\"")
-
-def intinput(text, min_ = None, max_ = None, is_valid = False):
-    while is_valid != True:
-        try:
-            value = int(input(text))
-        except:
-            print("invalid input")
-            continue
-        if min_ != None:
-            if (min_ > value):
-                print("invalid input")
-                continue
-        if max_ != None:
-            if (max_ < value):
-                print("invalid input")
-                continue
-        os.system('cls' if os.name == 'nt' else 'clear')
-        is_valid = True
-    return value
 
 player = spawn_player(cities_list)
 
